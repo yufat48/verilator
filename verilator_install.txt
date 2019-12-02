@@ -1,0 +1,44 @@
+Detailed Instruction on installing verilator:
+
+1. https://www.veripool.org/projects/verilator/wiki/Installing#_running_verilator
+
+2. Verilator manual:
+   https://www.veripool.org/ftp/verilator_doc.pdf
+ 
+3. Instructions on helloworld. (Also can refer to chapter 7 in the manual)
+
+mkdir test
+cd test
+
+create a filed called top.v 
+-------------------------------------------
+module top;
+initial begin $display("Hello World"); $finish; end
+endmodule
+-------------------------------------------
+
+Create another file called sim_main.cpp
+
+-------------------------------------------
+#include "Vour.h"
+#include "verilated.h"
+int main(int argc, char** argv, char** env) {
+Verilated::commandArgs(argc, argv);
+Vtop* top = new Vtop;
+while (!Verilated::gotFinish()) { top->eval(); }
+delete top;
+exit(0);
+}
+------------------------------------------
+
+setenv PATH $VERILATOR_ROOT/bin:$PATH
+
+a. Build command: verilator -Wall --cc top.v --exe sim_main.cpp
+
+This will create a directory called obj_dir
+
+b. make command: make -j -C obj_dir -f Vtop.mk Vtop
+This will create an executable Vtop
+
+c. run command: obj_dir/Vtop
+You can see "Hello World" printed to the screen.
